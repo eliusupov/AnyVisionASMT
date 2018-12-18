@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
+import GeneralStore from '../../store/GeneralStore';
+import * as ActionsGeneral from '../../store/ActionsGeneral';
 
 import './Main.scss';
 
@@ -16,34 +18,21 @@ class Main extends Component {
 	
 	showTopTenHandler = () => this.setState({showTopTen: !this.state.showTopTen});
 	
-	fetchResults = (e, string) => {
-		e.preventDefault();
-		if (string) {
-			$.ajax({
-				url: 'https://itunes.apple.com/search',
-				crossDomain: true,
-				dataType: 'jsonp',
-				data: {
-					term: string,
-					limit: 25,
-				}
-			}).done(data => {
-				const topTen = this.state.topTen;
-				if (topTen[string]) {
-					topTen[string] += 1;
-				} else {
-					topTen[string] = 1;
-				}
-				this.setState({
-					results: data.results,
-					topTen,
-				});
-			}).fail(err => {
-				this.setState({error: 'There was a problem with your request please try again.'})
-			});
-		} else {
-			this.setState({results: []})
-		}
+	updateResults = () => {
+		this.setState({results: GeneralStore.results});
+	}
+	
+	componentDidMount() {
+		this.setState({
+			results: GeneralStore.results,
+			topTen: GeneralStore.topTen,
+			searchString: GeneralStore.searchString,
+		});
+		GeneralStore.on('change', this.updateResults);
+	}
+	
+	componentWillUnmount() {
+		GeneralStore.removeListener('change', this.updateResults);
 	}
 	
 	render() {
@@ -81,7 +70,7 @@ class Main extends Component {
 						placeholder="Search the iTunes store"
 						onChange={e => this.inputHandler(e.target.value)}
 					/>
-					<input type="submit" className="search-input-button" value="Search" onClick={e => this.fetchResults(e, this.state.searchString)}/>
+					<input type="submit" className="search-input-button" value="Search" onClick={e => ActionsGeneral.fetchResults(e, this.state.searchString, this.state.topTen)}/>
 				</form>
 				<div className="items-container">
 					{this.state.results.map(e => {
@@ -92,7 +81,7 @@ class Main extends Component {
 								key={e.trackId}
 								className="item"
 								data={e}
-								onClick={() => window.open(`/item/${e.trackId}`, '_blank')}
+								onClick={() => this.props.history.push(`/item/${e.trackId}`)}
 							>
 								<img src={betterPic} alt={e.collectionName}/>
 								<div className="item-details">
@@ -110,4 +99,4 @@ class Main extends Component {
 	}
 }
 
-export default Main;
+export default withRouter(Main);
