@@ -1,5 +1,24 @@
 import dispatcher from './dispatcher';
 
+export function setLocalStorage(results, searchString, topTen) {
+	localStorage.results = JSON.stringify(results);
+	localStorage.searchString = searchString;
+	localStorage.topTen = JSON.stringify(topTen);
+}
+
+export function dispatchSpinner(bool) {
+	dispatcher.dispatch({
+		type: 'SPINNER',
+		spinner: bool,
+	});
+}
+export function dispatchError(errorMsg) {
+	dispatcher.dispatch({
+		type: 'ERROR',
+		error: errorMsg,
+	});
+}
+
 export function fetchResults(e, string, topTen) {
 	e.preventDefault();
 	dispatcher.dispatch({
@@ -9,17 +28,14 @@ export function fetchResults(e, string, topTen) {
 		topTen,
 	});
 	if (string) {
-		dispatcher.dispatch({
-			type: 'ERROR',
-			error: '',
-		});
-		dispatcher.dispatch({
-			type: 'SPINNER',
-			spinner: true,
-		});
-		localStorage.results = JSON.stringify([]);
-		localStorage.searchString = string;
-		localStorage.topTen = JSON.stringify(topTen);
+		dispatchError('');
+		dispatchSpinner(true);
+		if (topTen[string]) {
+			topTen[string] += 1;
+		} else {
+			topTen[string] = 1;
+		}
+		setLocalStorage([], string, topTen);
 		$.ajax({
 			url: 'https://itunes.apple.com/search',
 			crossDomain: true,
@@ -30,24 +46,14 @@ export function fetchResults(e, string, topTen) {
 			}
 		}).done(data => {
 			const mappedData = data.results.map((e, i) => {
-				e.id = i
+				e.id = i;
 				return e;
 			});
-			dispatcher.dispatch({
-				type: 'SPINNER',
-				spinner: false,
-			});
+			dispatchSpinner(false);
 			if (data.resultCount === 0) {
-				dispatcher.dispatch({
-					type: 'ERROR',
-					error: 'Sorry, no results found.',
-				});
+				dispatchError(`Sorry, no results found for ${string}.`);
+				setLocalStorage([], '', topTen);
 				return;
-			}
-			if (topTen[string]) {
-				topTen[string] += 1;
-			} else {
-				topTen[string] = 1;
 			}
 			dispatcher.dispatch({
 				type: 'GET_SEARCH_RESULTS',
@@ -55,18 +61,12 @@ export function fetchResults(e, string, topTen) {
 				searchString: string,
 				topTen,
 			});
-			localStorage.results = JSON.stringify(data.results);
-			localStorage.searchString = string;
-			localStorage.topTen = JSON.stringify(topTen);
+			setLocalStorage(data.results, string, topTen);
 		}).fail(err => {
-			dispatcher.dispatch({
-				type: 'ERROR',
-				error: 'There was a problem with the request please try again later.',
-			});
-			dispatcher.dispatch({
-				type: 'SPINNER',
-				spinner: false,
-			});
+			dispatchError('There was a problem with the request please try again later.');
+			dispatchSpinner(false);
 		});
+	} else {
+		setLocalStorage([], string, topTen);
 	}
 }

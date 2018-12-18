@@ -55,27 +55,48 @@ class Main extends Component {
 			.sort((a, b) => this.state.topTen[b] - this.state.topTen[a])
 			.map((e, i) => {
 				if (i < 10) {
-					return <li key={e}>{e}</li>;
+					return <li key={e}>{e} - {this.state.topTen[e]}</li>;
 				}
 			});
+		const results = this.state.results.map((e, i) => {
+			const betterPic = e.artworkUrl100.replace('100x100', '480x480');
+			return (
+				<div
+					key={i}
+					className="item"
+					data={e}
+					onClick={() => this.props.history.push(`/item/${i}`)}
+				>
+					<img src={betterPic} alt={e.collectionName}/>
+					<div className="item-details">
+						<div className="artist">{e.artistName}</div>
+						<div className="name">{e.trackName}</div>
+						<div className="collection">{e.collectionName}</div>
+					</div>
+					{e.trackName}
+				</div>
+			);
+		});
 		return (
 			<div className='main'>
 				<h1>iTunes Search</h1>
-				<button
-					className="top-ten"
-					onClick={() => this.showTopTenHandler()}
-				>
+				<div className="top-ten-container">
+					<button
+						className="top-ten-btn"
+						onClick={() => this.showTopTenHandler()}
+					>
+						{this.state.showTopTen
+							? 'Hide Top 10 Searches'
+							: 'Show Top 10 Searches'
+						}
+					</button>
 					{this.state.showTopTen
-						? 'Hide Top 10 Searches'
-						: 'Show Top 10 Searches'
+						? <ul className="top-ten-list">
+							{topTen}
+						</ul>
+						: null
 					}
-				</button>
-				{this.state.showTopTen
-					? <ol className="top-ten-container">
-						{topTen}
-					</ol>
-					: null
-				}
+				</div>
 				<form
 					className="form"
 					onSubmit={e => e.preventDefault()}
@@ -97,25 +118,7 @@ class Main extends Component {
 				{this.state.spinner
 					? <i className="fas fa-spinner fa-spin fa-2x"></i>
 					: <div className="items-container">
-						{this.state.results.map((e, i) => {
-							const betterPic = e.artworkUrl100.replace('100x100', '480x480');
-							return (
-								<div
-									key={i}
-									className="item"
-									data={e}
-									onClick={() => this.props.history.push(`/item/${i}`)}
-								>
-									<img src={betterPic} alt={e.collectionName}/>
-									<div className="item-details">
-										<div className="artist">{e.artistName}</div>
-										<div className="name">{e.trackName}</div>
-										<div className="collection">{e.collectionName}</div>
-									</div>
-									{e.trackName}
-								</div>
-							);
-						})}
+						{results}
 					</div>
 				}
 				{this.state.error
