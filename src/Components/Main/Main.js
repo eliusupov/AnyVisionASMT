@@ -4,10 +4,6 @@ import GeneralStore from '../../store/GeneralStore';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
 
 import './Main.scss';
-import {dispatchSpinner} from "../../store/ActionsGeneral";
-import dispatcher from "../../store/dispatcher";
-import {dispatchError} from "../../store/ActionsGeneral";
-import {setLocalStorage} from "../../store/ActionsGeneral";
 
 class Main extends Component {
 	state = {
@@ -29,6 +25,11 @@ class Main extends Component {
 		}
 	};
 	
+	logOut = () => {
+		localStorage.clear();
+		this.props.history.push('/systementry');
+	};
+	
 	updateResults = () => {
 		this.setState({
 			results: GeneralStore.results,
@@ -39,19 +40,15 @@ class Main extends Component {
 		});
 	}
 	
-	componentDidMount() {
-		// $.ajax({
-		// 	url: 'http://localhost:3000/user/get/all',
-		// 	type: 'GET',
-		// }).done(data => {
-		// 	debugger
-		// }).fail(err => {
-		//
-		// });
+	componentWillMount = () => {
+		if (!localStorage.email) this.props.history.push('/systementry');
+	}
+	
+	componentDidMount = () => {
 		GeneralStore.on('change', this.updateResults);
 	}
 	
-	componentWillUnmount() {
+	componentWillUnmount = () => {
 		GeneralStore.removeListener('change', this.updateResults);
 	}
 	
@@ -84,6 +81,13 @@ class Main extends Component {
 		});
 		return (
 			<div className='main'>
+				{localStorage.role == 0
+					? <>
+						<div className="manage-users-secret" onClick={() => this.props.history.push('/manageusers')}>Manage Users</div>
+						<div className="log-out" onClick={() => this.logOut()}>Logout</div>
+					</>
+					: <div className="log-out" onClick={() => this.logOut()}>Logout</div>
+				}
 				<h1>iTunes Search</h1>
 				<div className="top-ten-container">
 					<button

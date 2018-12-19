@@ -7,6 +7,8 @@ import "@babel/polyfill";
 
 import Main from './src/Components/Main/Main';
 import SingleItem from './src/Components/SingleItem/SingleItem';
+import SystemEntry from './src/Components/SystemEntry/SystemEntry';
+import ManageUsers from './src/Components/ManageUsers/ManageUsers';
 import NotFound from './src/Components/NotFound/NotFound';
 
 const App = () => (
@@ -14,6 +16,8 @@ const App = () => (
 		<Switch>
 			<Route exact path="/404" component={NotFound} />
 			<Route exact path="/" component={Main} />
+			<Route exact path="/systementry" component={SystemEntry} />
+			<Route exact path="/manageusers" component={ManageUsers} />
 			<Route exact path="/item/:id" component={SingleItem} />
 			<Redirect to={'/404'}/>
 		</Switch>

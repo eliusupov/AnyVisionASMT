@@ -7,6 +7,7 @@ class GeneralStore extends EventEmitter {
 	topTen = localStorage.topTen ? JSON.parse(localStorage.topTen) : {};
 	spinner = false;
 	error = '';
+	users = [];
 	
 	handleActions(action) {
 		switch (action.type) {
@@ -14,6 +15,16 @@ class GeneralStore extends EventEmitter {
 				this.results = action.results;
 				this.searchString = action.searchString;
 				this.topTen = action.topTen;
+				this.emit('change');
+				break;
+			}
+			case "GET_USERS": {
+				this.users = action.users;
+				this.emit('change');
+				break;
+			}
+			case "DELETE_USER": {
+				this.users = this.users.filter(e => e._id != action.id);
 				this.emit('change');
 				break;
 			}

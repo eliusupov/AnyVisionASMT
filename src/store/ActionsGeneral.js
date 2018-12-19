@@ -68,5 +68,39 @@ export function fetchResults(e, string, topTen) {
 		});
 	} else {
 		setLocalStorage([], string, topTen);
+		dispatchError('');
+		dispatchSpinner(false);
 	}
+}
+
+export function getUsers() {
+	$.ajax({
+		url: 'http://localhost:3000/user/get/all',
+		type: 'GET',
+	}).done(data => {
+		if (data.success) {
+			dispatcher.dispatch({
+				type: 'GET_USERS',
+				users: data.users,
+			});
+		}
+	}).fail(err => {
+	
+	});
+}
+
+export function deleteUser(userId) {
+	$.ajax({
+		url: `http://localhost:3000/user/delete/${userId}`,
+		type: 'DELETE',
+	}).done(data => {
+		if (data.success) {
+			dispatcher.dispatch({
+				type: 'DELETE_USER',
+				id: data.id,
+			});
+		}
+	}).fail(err => {
+	
+	});
 }
