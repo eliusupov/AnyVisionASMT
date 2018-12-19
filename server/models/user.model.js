@@ -5,12 +5,17 @@ let UserSchema = new Schema({
 	userName: {
 		type: String,
 		required: true,
-		max: 24,
+		lowercase: true,
+		minlength: 2,
+		maxlength: 16,
+		trim: true,
 	},
 	password: {
 		type: String,
 		required: true,
-		max: 12,
+		minlength: 6,
+		maxlength: 12,
+		trim: true,
 	},
 });
 

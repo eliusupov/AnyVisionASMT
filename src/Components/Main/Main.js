@@ -40,15 +40,14 @@ class Main extends Component {
 	}
 	
 	componentDidMount() {
-		$.ajax({
-			url: 'http://localhost:3000/user/get/all',
-			crossDomain: true,
-			type: 'GET',
-		}).done(data => {
-			debugger
-		}).fail(err => {
-
-		});
+		// $.ajax({
+		// 	url: 'http://localhost:3000/user/get/all',
+		// 	type: 'GET',
+		// }).done(data => {
+		// 	debugger
+		// }).fail(err => {
+		//
+		// });
 		GeneralStore.on('change', this.updateResults);
 	}
 	
