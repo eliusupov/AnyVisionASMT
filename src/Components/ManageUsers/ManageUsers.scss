@@ -16,7 +16,10 @@
 			padding: 10px 20px;
 			border-radius: 6px;
 			> div {
-				min-width: 20%;
+				width: 20%;
+				> span {
+					margin: 0 5px;
+				}
 			}
 			> i {
 				cursor: pointer;

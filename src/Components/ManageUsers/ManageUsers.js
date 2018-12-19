@@ -31,10 +31,22 @@ class ManageUsers extends Component {
 				<ul>
 					{this.state.users.map(e => (
 						<li key={e._id}>
-							<div>Id : {e._id}</div>
-							<div>Email : {e.email}</div>
-							<div>Password : {e.password}</div>
-							<div>Role : {e.role}</div>
+							<div>
+								<span>Id:</span>
+								{e._id}
+							</div>
+							<div>
+								<span>Email:</span>
+								{e.email}
+							</div>
+							<div>
+								<span>Password:</span>
+								{e.password}
+							</div>
+							<div>
+								<span>Role:</span>
+								{e.role}
+							</div>
 							{localStorage.id != e._id
 								? <i className="far fa-trash-alt" onClick={() => ActionsGeneral.deleteUser(e._id)}></i>
 								: <i className="fas fa-ban"></i>
