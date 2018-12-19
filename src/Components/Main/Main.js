@@ -4,6 +4,10 @@ import GeneralStore from '../../store/GeneralStore';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
 
 import './Main.scss';
+import {dispatchSpinner} from "../../store/ActionsGeneral";
+import dispatcher from "../../store/dispatcher";
+import {dispatchError} from "../../store/ActionsGeneral";
+import {setLocalStorage} from "../../store/ActionsGeneral";
 
 class Main extends Component {
 	state = {
@@ -26,23 +30,25 @@ class Main extends Component {
 	};
 	
 	updateResults = () => {
-		if (JSON.stringify(this.state.results) != JSON.stringify(GeneralStore.results)) {
-			this.setState({
-				results: GeneralStore.results,
-				topTen: GeneralStore.topTen,
-				searchString: GeneralStore.searchString,
-				spinner: GeneralStore.spinner,
-			});
-		}
-		if (JSON.stringify(this.state.error) != JSON.stringify(GeneralStore.error)) {
-			this.setState({error: GeneralStore.error});
-		}
-		if (JSON.stringify(this.state.spinner) != JSON.stringify(GeneralStore.spinner)) {
-			this.setState({spinner: GeneralStore.spinner});
-		}
+		this.setState({
+			results: GeneralStore.results,
+			topTen: GeneralStore.topTen,
+			searchString: GeneralStore.searchString,
+			error: GeneralStore.error,
+			spinner: GeneralStore.spinner
+		});
 	}
 	
 	componentDidMount() {
+		$.ajax({
+			url: 'http://localhost:3000/user/get/all',
+			crossDomain: true,
+			type: 'GET',
+		}).done(data => {
+			debugger
+		}).fail(err => {
+
+		});
 		GeneralStore.on('change', this.updateResults);
 	}
 	
