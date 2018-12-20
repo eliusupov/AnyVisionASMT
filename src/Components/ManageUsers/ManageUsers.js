@@ -45,7 +45,7 @@ class ManageUsers extends Component {
 							</div>
 							<div>
 								<span>Role:</span>
-								{e.role}
+								{e.role == 0 ? 'Admin' : 'User'}
 							</div>
 							{e.role !== 0
 								? <i className="far fa-trash-alt" onClick={() => ActionsGeneral.deleteUser(e._id)}></i>

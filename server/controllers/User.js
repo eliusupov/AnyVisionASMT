@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const User = require('../models/UserModel');
 
 exports.userCreate = (req, res, next) => {
 	let newUser = new User (
@@ -30,15 +30,14 @@ exports.userCreate = (req, res, next) => {
 };
 
 exports.userLogin = (req, res) => {
-	User.find({
+	User.findOne({
 		email: req.body.email,
 		password: req.body.password,
 	}, (err, user) => {
-		const [singleUser] = user;
 		if (err) return next(err);
 		res.send({
-			success: !!singleUser,
-			user: singleUser,
+			success: !!user,
+			user,
 		});
 	});
 };
