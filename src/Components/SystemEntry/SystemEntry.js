@@ -99,7 +99,11 @@ class SystemEntry extends Component {
 				localStorage.role = data.user.role;
 				this.props.history.push('/');
 			} else {
-			
+				const errArr = [...this.state.errArr];
+				errArr.push('Something went wrong try again later');
+				this.setState({
+					spinner: false,
+				});
 			}
 		}).fail(err => {
 		
