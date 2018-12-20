@@ -126,7 +126,7 @@ class SystemEntry extends Component {
 				this.props.history.push('/');
 			} else {
 				const errArr = [...this.state.errArr];
-				errArr.push('Incorrect Email\Password, and no i dont have recovery services so youre stuck');
+				errArr.push('Incorrect Email / Password, and no i dont have recovery services so youre stuck');
 				this.setState({
 					errArr,
 					spinner: false,
