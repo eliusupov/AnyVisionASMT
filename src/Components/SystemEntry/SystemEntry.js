@@ -28,7 +28,7 @@ class SystemEntry extends Component {
 			errArr.push('Please enter an email');
 		} else if (!this.validateEmail(state.email)) {
 			errArr.push('Please enter a valid email - example@example.com');
-		} else if (this.props.match.path === 'register') {
+		} else if (this.props.match.path === '/register') {
 			const emailAvail = await this.checkEmail(state.email);
 			if (!emailAvail) {
 				errArr.push('Email is taken');
