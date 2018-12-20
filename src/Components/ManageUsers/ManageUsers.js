@@ -47,7 +47,7 @@ class ManageUsers extends Component {
 								<span>Role:</span>
 								{e.role}
 							</div>
-							{localStorage.id != e._id
+							{e.role !== 0
 								? <i className="far fa-trash-alt" onClick={() => ActionsGeneral.deleteUser(e._id)}></i>
 								: <i className="fas fa-ban"></i>
 							}
