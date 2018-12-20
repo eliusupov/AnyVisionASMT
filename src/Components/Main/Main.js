@@ -106,10 +106,7 @@ class Main extends Component {
 						: null
 					}
 				</div>
-				<form
-					className="form"
-					onSubmit={e => e.preventDefault()}
-				>
+				<form onSubmit={e => e.preventDefault()}>
 					<input
 						className="search-input"
 						type="text"

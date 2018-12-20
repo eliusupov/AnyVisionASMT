@@ -152,7 +152,7 @@ class SystemEntry extends Component {
 	render() {
 		return (
 			<div className='system-entry'>
-				<form>
+				<form onSubmit={e => e.preventDefault()}>
 					{this.state.mode === 'register'
 						? <h1>Register to use the system</h1>
 						: null
