@@ -8,7 +8,7 @@ import './SingleItem.scss';
 const singleItem = (props) => {
 	const data = GeneralStore.results.find(e => e.id == props.match.params.id) || {};
 	const betterPic = data.artworkUrl100 ? data.artworkUrl100.replace('100x100', '480x480') : data.artworkUrl100;
-	const kind = data.previewUrl ? data.previewUrl.substr(data.previewUrl.length -3) : '';
+	const kind = data.previewUrl ? data.previewUrl.substr(data.previewUrl.length - 3) : '';
 	if (!data || !data.id) {
 		props.history.push('/404');
 		return null;
@@ -23,7 +23,7 @@ const singleItem = (props) => {
 						? <a href={data.artistViewUrl} target={'_blank'}>{data.artistName}</a>
 						: data.artistName
 					}
-					</div>
+				</div>
 				: null
 			}
 			{data.trackName
@@ -33,7 +33,7 @@ const singleItem = (props) => {
 						? <a href={data.trackViewUrl} target={'_blank'}>{data.trackName}</a>
 						: data.trackName
 					}
-					</div>
+				</div>
 				: null
 			}
 			{data.collectionName
@@ -43,7 +43,7 @@ const singleItem = (props) => {
 						? <a href={data.collectionViewUrl} target={'_blank'}>{data.collectionName}</a>
 						: data.collectionName
 					}
-					</div>
+				</div>
 				: null
 			}
 			{data.releaseDate

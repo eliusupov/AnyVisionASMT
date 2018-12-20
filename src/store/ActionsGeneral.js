@@ -12,6 +12,7 @@ export function dispatchSpinner(bool) {
 		spinner: bool,
 	});
 }
+
 export function dispatchError(errorMsg) {
 	dispatcher.dispatch({
 		type: 'ERROR',

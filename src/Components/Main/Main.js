@@ -83,7 +83,12 @@ class Main extends Component {
 			<div className='main'>
 				{localStorage.role == 0
 					? <>
-						<div className="manage-users-secret" onClick={() => this.props.history.push('/manageusers')}>Manage Users</div>
+						<div
+							className="manage-users-secret"
+							onClick={() => this.props.history.push('/manageusers')}
+						>
+							Manage Users
+						</div>
 						<div className="log-out" onClick={() => this.logOut()}>Logout</div>
 					</>
 					: <div className="log-out" onClick={() => this.logOut()}>Logout</div>
