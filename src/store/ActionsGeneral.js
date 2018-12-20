@@ -105,3 +105,9 @@ export function deleteUser(userId) {
 	
 	});
 }
+
+export function resetReuslts() {
+	dispatcher.dispatch({
+		type: 'RESET_RESULTS',
+	});
+}

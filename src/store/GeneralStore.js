@@ -18,6 +18,13 @@ class GeneralStore extends EventEmitter {
 				this.emit('change');
 				break;
 			}
+			case "RESET_RESULTS": {
+				this.results = [];
+				this.searchString = '';
+				this.topTen = {};
+				this.emit('change');
+				break;
+			}
 			case "GET_USERS": {
 				this.users = action.users;
 				this.emit('change');

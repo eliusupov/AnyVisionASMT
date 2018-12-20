@@ -15,7 +15,7 @@ class ManageUsers extends Component {
 	}
 	
 	componentDidMount = () => {
-		if (!localStorage.email || localStorage.role != 0) this.props.history.push('/systementry');
+		if (!localStorage.email || localStorage.role != 0) this.props.history.push('/login');
 		ActionsGeneral.getUsers();
 		GeneralStore.on('change', this.updateResults);
 	}

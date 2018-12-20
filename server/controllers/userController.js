@@ -1,6 +1,6 @@
-const User = require('../models/user.model');
+const User = require('../models/userModel');
 
-exports.user_create = (req, res, next) => {
+exports.userCreate = (req, res, next) => {
 	let newUser = new User (
 		{
 			email: req.body.email,
@@ -29,7 +29,7 @@ exports.user_create = (req, res, next) => {
 	})
 };
 
-exports.user_login = (req, res) => {
+exports.userLogin = (req, res) => {
 	User.find({
 		email: req.body.email,
 		password: req.body.password,
@@ -43,7 +43,7 @@ exports.user_login = (req, res) => {
 	});
 };
 
-exports.user_get_all = (req, res) => {
+exports.userGetAll = (req, res) => {
 	User.find((err, users) => {
 		if (err) {
 			res.send({
@@ -59,17 +59,23 @@ exports.user_get_all = (req, res) => {
 	})
 };
 
-exports.user_delete_single = (req, res) => {
-	User.findOneAndDelete(req.params.id, (err) => {
+exports.userDeleteSingle = (req, res) => {
+	User.findOneAndDelete({
+		_id: req.params.id
+	}, (err, user) => {
 		if (err) return next(err);
-		res.send({
-			success: true,
-			id: req.params.id,
-		});
+		if (user) {
+			res.send({
+				success: true,
+				id: user._id,
+			});
+		} else {
+			res.send({success: false});
+		}
 	})
 };
 
-exports.user_check_email_avail = (req, res) => {
+exports.userCheckEmailAvail = (req, res) => {
 	User.find({ email: req.body.email }, (err, user) => {
 		const [singleUser] = user;
 		if (err) return next(err);

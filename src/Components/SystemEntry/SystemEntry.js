@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import * as ActionsGeneral from '../../store/ActionsGeneral';
 
 import './SystemEntry.scss';
-
 
 class SystemEntry extends Component {
 	state = {
@@ -17,10 +17,10 @@ class SystemEntry extends Component {
 	
 	inputHandler = (type, value) => this.setState({[type]: value});
 	
-	modeHandler = type => this.setState({
-		...this.copyState,
-		mode: type,
-	});
+	modeHandler = type => {
+		this.setState(this.copyState);
+		this.props.history.push(type)
+	};
 	
 	validate = async (state) => {
 		const errArr = [];
@@ -28,7 +28,7 @@ class SystemEntry extends Component {
 			errArr.push('Please enter an email');
 		} else if (!this.validateEmail(state.email)) {
 			errArr.push('Please enter a valid email - example@example.com');
-		} else if (state.mode === 'register') {
+		} else if (this.props.match.path === 'register') {
 			const emailAvail = await this.checkEmail(state.email);
 			if (!emailAvail) {
 				errArr.push('Email is taken');
@@ -94,6 +94,7 @@ class SystemEntry extends Component {
 			}
 		}).done(data => {
 			if (data.success) {
+				ActionsGeneral.resetReuslts();
 				localStorage.id = data.user._id;
 				localStorage.email = data.user.email;
 				localStorage.role = data.user.role;
@@ -124,6 +125,7 @@ class SystemEntry extends Component {
 			}
 		}).done(data => {
 			if (data.success) {
+				ActionsGeneral.resetReuslts();
 				localStorage.id = data.user._id;
 				localStorage.email = data.user.email;
 				localStorage.role = data.user.role;
@@ -153,11 +155,11 @@ class SystemEntry extends Component {
 		return (
 			<div className='system-entry'>
 				<form onSubmit={e => e.preventDefault()}>
-					{this.state.mode === 'register'
+					{this.props.match.path === '/register'
 						? <h1>Register to use the system</h1>
 						: null
 					}
-					{this.state.mode === 'login'
+					{this.props.match.path === '/login'
 						? <h1>Login to use the system</h1>
 						: null
 					}
@@ -177,7 +179,7 @@ class SystemEntry extends Component {
 							onChange={e => this.inputHandler('password', e.target.value)}
 						/>
 					</label>
-					{this.state.mode === 'register'
+					{this.props.match.path === '/register'
 						? <div>
 							<input
 								checked={this.state.isAdmin}
@@ -188,14 +190,14 @@ class SystemEntry extends Component {
 						</div>
 						: null
 					}
-					{this.state.mode === 'register'
-						? <div className="swap" onClick={() => this.modeHandler('login')}>
+					{this.props.match.path === '/register'
+						? <div className="swap" onClick={() => this.modeHandler('/login')}>
 							Have a user? click here
 						</div>
 						: null
 					}
-					{this.state.mode === 'login'
-						? <div className="swap" onClick={() => this.modeHandler('register')}>
+					{this.props.match.path === '/login'
+						? <div className="swap" onClick={() => this.modeHandler('/register')}>
 							Don't Have a user? click here
 						</div>
 						: null
@@ -205,7 +207,7 @@ class SystemEntry extends Component {
 						{this.state.spinner
 							? <i className="fas fa-spinner fa-spin"></i>
 							: <>
-								{this.state.mode === 'register'
+								{this.props.match.path === '/register'
 									? <input
 										type="submit"
 										value='Submit'
@@ -213,7 +215,7 @@ class SystemEntry extends Component {
 									/>
 									: null
 								}
-								{this.state.mode === 'login'
+								{this.props.match.path === '/login'
 									? <input
 										type="submit"
 										value='Login'

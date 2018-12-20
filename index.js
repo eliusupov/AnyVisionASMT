@@ -16,7 +16,8 @@ const App = () => (
 		<Switch>
 			<Route exact path="/404" component={NotFound} />
 			<Route exact path="/" component={Main} />
-			<Route exact path="/systementry" component={SystemEntry} />
+			<Route exact path="/register" component={SystemEntry} />
+			<Route exact path="/login" component={SystemEntry} />
 			<Route exact path="/manageusers" component={ManageUsers} />
 			<Route exact path="/item/:id" component={SingleItem} />
 			<Redirect to={'/404'}/>

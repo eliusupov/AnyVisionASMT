@@ -27,7 +27,7 @@ class Main extends Component {
 	
 	logOut = () => {
 		localStorage.clear();
-		this.props.history.push('/systementry');
+		this.props.history.push('/login');
 	};
 	
 	updateResults = () => {
@@ -41,7 +41,7 @@ class Main extends Component {
 	}
 	
 	componentWillMount = () => {
-		if (!localStorage.email) this.props.history.push('/systementry');
+		if (!localStorage.email) this.props.history.push('/login');
 	}
 	
 	componentDidMount = () => {
