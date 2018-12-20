@@ -98,6 +98,8 @@ class SystemEntry extends Component {
 				localStorage.email = data.user.email;
 				localStorage.role = data.user.role;
 				this.props.history.push('/');
+			} else {
+			
 			}
 		}).fail(err => {
 		

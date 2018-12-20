@@ -70,7 +70,7 @@ exports.user_delete_single = (req, res) => {
 };
 
 exports.user_check_email_avail = (req, res) => {
-	User.find({ _id: req.body.id }, (err, user) => {
+	User.find({ email: req.body.email }, (err, user) => {
 		const [singleUser] = user;
 		if (err) return next(err);
 		res.send(!singleUser);
