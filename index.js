@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Route, Router, Switch, Redirect} from 'react-router-dom';
-import {hot} from 'react-hot-loader';
+import { BrowserRouter, Route, Router, Switch, Redirect } from 'react-router-dom';
+import { hot } from 'react-hot-loader';
 import 'jquery';
 import "@babel/polyfill";
 
@@ -10,6 +10,8 @@ import SingleItem from './src/Components/SingleItem/SingleItem';
 import SystemEntry from './src/Components/SystemEntry/SystemEntry';
 import ManageUsers from './src/Components/ManageUsers/ManageUsers';
 import NotFound from './src/Components/NotFound/NotFound';
+
+import './style.scss';
 
 const App = () => (
 	<BrowserRouter>

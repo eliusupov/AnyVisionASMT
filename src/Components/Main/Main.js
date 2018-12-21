@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import GeneralStore from '../../store/GeneralStore';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
 
@@ -40,27 +40,21 @@ class Main extends Component {
 		});
 	}
 	
-	componentWillMount = () => {
-		if (!localStorage.email) this.props.history.push('/login');
-	}
-	
-	componentDidMount = () => {
-		GeneralStore.on('change', this.updateResults);
-	}
-	
-	componentWillUnmount = () => {
-		GeneralStore.removeListener('change', this.updateResults);
-	}
-	
-	render() {
-		const topTen = Object.keys(this.state.topTen)
-			.sort((a, b) => this.state.topTen[b] - this.state.topTen[a])
+	renderTopTen = () => {
+		const {topTen} = this.state;
+		const topTenList = Object.keys(topTen)
+			.sort((a, b) => topTen[b] - topTen[a])
 			.map((e, i) => {
 				if (i < 10) {
-					return <li key={e}>{e} - {this.state.topTen[e]}</li>;
+					return <li key={e}>{e} - {topTen[e]}</li>;
 				}
 			});
-		const results = this.state.results.map((e, i) => {
+		return topTenList;
+	};
+	
+	renderResults = () => {
+		const {results} = this.state;
+		const resultsList = results.map((e, i) => {
 			const betterPic = e.artworkUrl100.replace('100x100', '480x480');
 			return (
 				<div
@@ -79,16 +73,32 @@ class Main extends Component {
 				</div>
 			);
 		});
+		return resultsList;
+	};
+	
+	componentWillMount = () => {
+		if (!localStorage.email) this.props.history.push('/login');
+	}
+	
+	componentDidMount = () => {
+		GeneralStore.on('change', this.updateResults);
+	}
+	
+	componentWillUnmount = () => {
+		GeneralStore.removeListener('change', this.updateResults);
+	}
+	
+	render() {
+		const {showTopTen, searchString, topTen, spinner, error} = this.state;
 		return (
 			<div className='main'>
-				{localStorage.role == 0
-					? <div
+				{localStorage.role == 0 &&
+					<div
 						className="manage-users-secret"
 						onClick={() => this.props.history.push('/manageusers')}
 					>
 						Manage Users
 					</div>
-					: null
 				}
 				<div className="log-out" onClick={() => this.logOut()}>Logout</div>
 				<h1>iTunes Search</h1>
@@ -97,24 +107,18 @@ class Main extends Component {
 						className="top-ten-btn"
 						onClick={() => this.showTopTenHandler()}
 					>
-						{this.state.showTopTen
+						{showTopTen
 							? 'Hide Top 10 Searches'
 							: 'Show Top 10 Searches'
 						}
 					</button>
-					{this.state.showTopTen
-						? <ul className="top-ten-list">
-							{topTen}
-						</ul>
-						: null
-					}
-					{this.state.showTopTen && <ul className="top-ten-list">{ topTen }</ul>}
+					{showTopTen && <ul className="top-ten-list">{ this.renderTopTen() }</ul>}
 				</div>
 				<form onSubmit={e => e.preventDefault()}>
 					<input
 						className="search-input"
 						type="text"
-						value={this.state.searchString}
+						value={searchString}
 						placeholder="Search the iTunes store"
 						onChange={e => this.inputHandler(e.target.value)}
 					/>
@@ -122,22 +126,17 @@ class Main extends Component {
 						type="submit"
 						className="search-input-button"
 						value="Search"
-						onClick={e => ActionsGeneral.fetchResults(e, this.state.searchString, this.state.topTen)}
+						onClick={e => ActionsGeneral.fetchResults(e, searchString, topTen)}
 					/>
 				</form>
-				{this.state.spinner
+				{spinner
 					? <i className="fas fa-spinner fa-spin fa-2x"></i>
-					: <div className="items-container">
-						{results}
-					</div>
+					: <div className="items-container">{ this.renderResults() }</div>
 				}
-				{this.state.error
-					? <div>{this.state.error}</div>
-					: null
-				}
+				{error && <div>{this.state.error}</div>}
 			</div>
 		);
 	}
 }
 
-export default withRouter(Main);
+export default Main;

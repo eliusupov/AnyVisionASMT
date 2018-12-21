@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
+import { validatePassword, validateEmail } from '../../MainModules/helperFunctions';
 
 import './SystemEntry.scss';
 
@@ -23,41 +24,27 @@ class SystemEntry extends Component {
 	};
 	
 	validate = async (state) => {
+		const {email, password} = state;
 		const errArr = [];
-		if (!state.email) {
+		if (!email) {
 			errArr.push('Please enter an email');
-		} else if (!this.validateEmail(state.email)) {
+		} else if (!validateEmail(email)) {
 			errArr.push('Please enter a valid email - example@example.com');
 		} else if (this.props.match.path === '/register') {
-			const emailAvail = await this.checkEmail(state.email);
+			const emailAvail = await this.checkEmail(email);
 			if (!emailAvail) {
 				errArr.push('Email is taken');
 			}
 		}
-		if (!state.password) {
+		if (!password) {
 			errArr.push('Please enter a password');
-		} else if (this.validatePassword(state.password)) {
+		} else if (validatePassword(password)) {
 			errArr.push('No special characters');
-		} else if (state.password.length < 5 || state.password.length > 12) {
+		} else if (password.length < 5 || password.length > 12) {
 			errArr.push('Password length between 5-12');
 		}
 		this.setState({errArr});
 		return errArr.length === 0;
-	};
-	
-	validatePassword = (password) => {
-		if (password) {
-			const regExp = /[^A-Za-z0-9]+/g;
-			return regExp.test(password);
-		}
-	};
-	
-	validateEmail = (email) => {
-		if (email) {
-			email.toLowerCase();
-			const regExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-			return regExp.test(email);
-		}
 	};
 	
 	checkEmail = async (email) => {
@@ -152,20 +139,15 @@ class SystemEntry extends Component {
 	}
 	
 	render() {
+		const {email, password, isAdmin, errArr, spinner} = this.state;
 		return (
 			<div className='system-entry'>
 				<form onSubmit={e => e.preventDefault()}>
-					{this.props.match.path === '/register'
-						? <h1>Register to use the system</h1>
-						: null
-					}
-					{this.props.match.path === '/login'
-						? <h1>Login to use the system</h1>
-						: null
-					}
+					{this.props.match.path === '/register' && <h1>Register to use the system</h1>}
+					{this.props.match.path === '/login' && <h1>Login to use the system</h1>}
 					<label>
 						<input
-							value={this.state.email}
+							value={email}
 							type="email"
 							placeholder="Email"
 							onChange={e => this.inputHandler('email', e.target.value)}
@@ -173,55 +155,50 @@ class SystemEntry extends Component {
 					</label>
 					<label>
 						<input
-							value={this.state.password}
+							value={password}
 							type="password"
 							placeholder="Password"
 							onChange={e => this.inputHandler('password', e.target.value)}
 						/>
 					</label>
-					{this.props.match.path === '/register'
-						? <div>
+					{this.props.match.path === '/register' &&
+						<div>
 							<input
-								checked={this.state.isAdmin}
+								checked={isAdmin}
 								type="checkbox"
 								onChange={e => this.inputHandler('isAdmin', e.target.checked)}
 							/>
 							<span>Create as Admin?</span>
 						</div>
-						: null
 					}
-					{this.props.match.path === '/register'
-						? <div className="swap" onClick={() => this.modeHandler('/login')}>
+					{this.props.match.path === '/register' &&
+						<div className="swap" onClick={() => this.modeHandler('/login')}>
 							Have a user? click here
 						</div>
-						: null
 					}
-					{this.props.match.path === '/login'
-						? <div className="swap" onClick={() => this.modeHandler('/register')}>
+					{this.props.match.path === '/login' &&
+						<div className="swap" onClick={() => this.modeHandler('/register')}>
 							Don't Have a user? click here
 						</div>
-						: null
 					}
-					{this.state.errArr.map(e => <div key={e} className="err">{e}</div>)}
+					{errArr.map(e => <div key={e} className="err">{e}</div>)}
 					<div className="submit">
-						{this.state.spinner
+						{spinner
 							? <i className="fas fa-spinner fa-spin"></i>
 							: <>
-								{this.props.match.path === '/register'
-									? <input
+								{this.props.match.path === '/register' &&
+									<input
 										type="submit"
 										value='Submit'
 										onClick={(e) => this.sendRegister(e, this.state)}
 									/>
-									: null
 								}
-								{this.props.match.path === '/login'
-									? <input
+								{this.props.match.path === '/login' &&
+									<input
 										type="submit"
 										value='Login'
 										onClick={(e) => this.sendLogin(e, this.state)}
 									/>
-									: null
 								}
 							</>
 						}
