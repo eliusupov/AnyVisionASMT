@@ -90,7 +90,7 @@ class SystemEntry extends Component {
 			data: {
 				email: state.email,
 				password: state.password,
-				role: this.state.isAdmin ? 0 : 1,
+				role: state.isAdmin ? 0 : 1,
 			}
 		}).done(data => {
 			if (data.success) {

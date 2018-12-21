@@ -76,7 +76,7 @@ export function fetchResults(e, string, topTen) {
 
 export function getUsers() {
 	$.ajax({
-		url: 'http://localhost:3000/user/get/all',
+		url: 'http://localhost:3000/user/get',
 		type: 'GET',
 	}).done(data => {
 		if (data.success) {

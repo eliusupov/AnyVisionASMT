@@ -5,7 +5,7 @@ const user = require('../controllers/User');
 
 router.post('/create', user.userCreate);
 router.post('/login', user.userLogin);
-router.get('/get/all', user.userGetAll);
+router.get('/get', user.userGetAll);
 router.delete('/delete/:id', user.userDeleteSingle);
 router.post('/checkEmail', user.userCheckEmailAvail);
 

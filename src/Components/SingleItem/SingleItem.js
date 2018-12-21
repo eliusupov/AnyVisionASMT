@@ -8,7 +8,7 @@ import './SingleItem.scss';
 const singleItem = (props) => {
 	const data = GeneralStore.results.find(e => e.id == props.match.params.id) || {};
 	const betterPic = data.artworkUrl100 ? data.artworkUrl100.replace('100x100', '480x480') : data.artworkUrl100;
-	const kind = data.previewUrl ? data.previewUrl.substr(data.previewUrl.length - 3) : '';
+	const fileType = data.previewUrl ? data.previewUrl.substr(data.previewUrl.length - 3) : '';
 	if (!data || !data.id) {
 		props.history.push('/404');
 		return null;
@@ -52,13 +52,13 @@ const singleItem = (props) => {
 				</div>
 				: null
 			}
-			{kind === 'm4a'
+			{fileType === 'm4a'
 				? <div>
 					<audio controls src={data.previewUrl}></audio>
 				</div>
 				: null
 			}
-			{kind === 'm4v'
+			{fileType === 'm4v'
 				? <div>
 					<video controls src={data.previewUrl}></video>
 				</div>

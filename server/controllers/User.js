@@ -1,22 +1,18 @@
 const User = require('../models/UserModel');
 
-exports.userCreate = (req, res, next) => {
-	let newUser = new User (
+exports.userCreate = async (req, res, next) => {
+	const { email, password, role } = req.body;
+	const newUser = new User (
 		{
-			email: req.body.email,
-			password: req.body.password,
-			role: req.body.role,
+			email,
+			password,
+			role,
 		}
 	);
-	
-	User.find({ email: req.body.email }, (err, user) => {
-		const [singleUser] = user;
-		if (!singleUser) {
+	try {
+		const user = await User.findOne({ email });
+		if (!user) {
 			newUser.save((err) => {
-				if (err) {
-					res.send({success: false})
-					return next(err);
-				}
 				res.send({
 					user: newUser,
 					success: true,
@@ -25,44 +21,41 @@ exports.userCreate = (req, res, next) => {
 		} else {
 			res.send({success: false});
 		}
-		if (err) return next(err);
-	})
+	} catch (err) {
+		return next(err);
+	}
 };
 
-exports.userLogin = (req, res) => {
-	User.findOne({
-		email: req.body.email,
-		password: req.body.password,
-	}, (err, user) => {
-		if (err) return next(err);
+exports.userLogin = async (req, res, next) => {
+	const { email, password } = req.body;
+	try {
+		const user = await User.findOne({ email, password });
 		res.send({
 			success: !!user,
 			user,
 		});
-	});
+	} catch (err) {
+		return next(err);
+	}
 };
 
-exports.userGetAll = (req, res) => {
-	User.find((err, users) => {
-		if (err) {
-			res.send({
-				success: false,
-				err,
-			});
-			return next(err);
-		}
+exports.userGetAll = async (req, res, next) => {
+	try {
+		const users = await User.find();
 		res.send({
 			success: true,
 			users,
 		});
-	})
+	} catch (err) {
+		res.send({success: false});
+		return next(err);
+	}
 };
 
-exports.userDeleteSingle = (req, res) => {
-	User.findOneAndDelete({
-		_id: req.params.id
-	}, (err, user) => {
-		if (err) return next(err);
+exports.userDeleteSingle = async (req, res, next) => {
+	const { id } = req.params;
+	try {
+		const user = await User.findOneAndDelete({ _id: id });
 		if (user) {
 			res.send({
 				success: true,
@@ -71,13 +64,17 @@ exports.userDeleteSingle = (req, res) => {
 		} else {
 			res.send({success: false});
 		}
-	})
+	} catch (err) {
+		return next(err);
+	}
 };
 
-exports.userCheckEmailAvail = (req, res) => {
-	User.find({ email: req.body.email }, (err, user) => {
-		const [singleUser] = user;
-		if (err) return next(err);
-		res.send(!singleUser);
-	})
+exports.userCheckEmailAvail = async (req, res, next) => {
+	const { email } = req.body;
+	try {
+		const user = await User.findOne({ email });
+		res.send(!user);
+	} catch (err) {
+		return next(err);
+	}
 };
