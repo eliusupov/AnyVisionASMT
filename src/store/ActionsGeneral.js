@@ -1,4 +1,5 @@
 import dispatcher from './dispatcher';
+import axios from 'axios';
 
 export function setLocalStorage(results, searchString, topTen) {
 	localStorage.results = JSON.stringify(results);
@@ -37,36 +38,31 @@ export function fetchResults(e, string, topTen) {
 			topTen[string] = 1;
 		}
 		setLocalStorage([], string, topTen);
-		$.ajax({
-			url: 'https://itunes.apple.com/search',
-			crossDomain: true,
-			dataType: 'jsonp',
-			data: {
-				term: string,
-				limit: 25,
-			}
-		}).done(data => {
-			const mappedData = data.results.map((e, i) => {
-				e.id = i;
-				return e;
+		axios.get(`https://itunes.apple.com/search?term=${string}&limit=25`)
+			.then(res => {
+				const {results, resultCount} = res.data;
+				const mappedData = results.map((e, i) => {
+					e.id = i;
+					return e;
+				});
+				dispatchSpinner(false);
+				if (resultCount === 0) {
+					dispatchError(`Sorry, no results found for ${string}.`);
+					setLocalStorage([], '', topTen);
+					return;
+				}
+				dispatcher.dispatch({
+					type: 'GET_SEARCH_RESULTS',
+					results: results,
+					searchString: string,
+					topTen,
+				});
+				setLocalStorage(results, string, topTen);
+			})
+			.catch(err => {
+				dispatchError('There was a problem with the request please try again later.');
+				dispatchSpinner(false);
 			});
-			dispatchSpinner(false);
-			if (data.resultCount === 0) {
-				dispatchError(`Sorry, no results found for ${string}.`);
-				setLocalStorage([], '', topTen);
-				return;
-			}
-			dispatcher.dispatch({
-				type: 'GET_SEARCH_RESULTS',
-				results: data.results,
-				searchString: string,
-				topTen,
-			});
-			setLocalStorage(data.results, string, topTen);
-		}).fail(err => {
-			dispatchError('There was a problem with the request please try again later.');
-			dispatchSpinner(false);
-		});
 	} else {
 		setLocalStorage([], string, topTen);
 		dispatchError('');
@@ -75,35 +71,33 @@ export function fetchResults(e, string, topTen) {
 }
 
 export function getUsers() {
-	$.ajax({
-		url: 'http://localhost:3000/user/get',
-		type: 'GET',
-	}).done(data => {
-		if (data.success) {
-			dispatcher.dispatch({
-				type: 'GET_USERS',
-				users: data.users,
-			});
-		}
-	}).fail(err => {
-	
-	});
+	axios.get('http://localhost:3000/user/get')
+		.then(res => {
+			const {success, users} = res.data;
+			if (success) {
+				dispatcher.dispatch({
+					type: 'GET_USERS',
+					users,
+				});
+			}
+		})
+		.catch(err => {
+		});
 }
 
 export function deleteUser(userId) {
-	$.ajax({
-		url: `http://localhost:3000/user/delete/${userId}`,
-		type: 'DELETE',
-	}).done(data => {
-		if (data.success) {
-			dispatcher.dispatch({
-				type: 'DELETE_USER',
-				id: data.id,
-			});
-		}
-	}).fail(err => {
-	
-	});
+	axios.delete(`http://localhost:3000/user/delete/${userId}`)
+		.then(res => {
+			const {success ,id} = res.data;
+			if (success) {
+				dispatcher.dispatch({
+					type: 'DELETE_USER',
+					id,
+				});
+			}
+		})
+		.catch(err => {
+		});
 }
 
 export function resetReuslts() {

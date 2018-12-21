@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import React, {Component} from 'react';
+import {Link} from "react-router-dom";
 import GeneralStore from '../../store/GeneralStore';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
 
@@ -112,7 +112,7 @@ class Main extends Component {
 							: 'Show Top 10 Searches'
 						}
 					</button>
-					{showTopTen && <ul className="top-ten-list">{ this.renderTopTen() }</ul>}
+					{showTopTen && <ul className="top-ten-list">{this.renderTopTen()}</ul>}
 				</div>
 				<form onSubmit={e => e.preventDefault()}>
 					<input
@@ -131,7 +131,7 @@ class Main extends Component {
 				</form>
 				{spinner
 					? <i className="fas fa-spinner fa-spin fa-2x"></i>
-					: <div className="items-container">{ this.renderResults() }</div>
+					: <div className="items-container">{this.renderResults()}</div>
 				}
 				{error && <div>{this.state.error}</div>}
 			</div>

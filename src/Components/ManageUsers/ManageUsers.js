@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import GeneralStore from '../../store/GeneralStore';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
 
@@ -56,7 +56,7 @@ class ManageUsers extends Component {
 		return (
 			<div className='manage-users'>
 				<h1>Manage Users</h1>
-				<ul>{ this.renderUsers() }</ul>
+				<ul>{this.renderUsers()}</ul>
 			</div>
 		);
 	}

@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import axios from 'axios';
 import * as ActionsGeneral from '../../store/ActionsGeneral';
-import { validatePassword, validateEmail } from '../../MainModules/helperFunctions';
+import {validatePassword, validateEmail} from '../../MainModules/helperFunctions';
 
 import './SystemEntry.scss';
 
@@ -50,13 +51,8 @@ class SystemEntry extends Component {
 	checkEmail = async (email) => {
 		let emailAvail;
 		try {
-			emailAvail = await $.ajax({
-				url: 'http://localhost:3000/user/checkEmail',
-				type: 'POST',
-				data: {
-					email,
-				}
-			});
+			const res = await axios.post('http://localhost:3000/user/checkEmail', {email});
+			emailAvail = res.data;
 		} catch (e) {
 			const errArr = [...this.state.errArr];
 			errArr.push('Email is taken');
@@ -69,65 +65,58 @@ class SystemEntry extends Component {
 	sendRegister = async (e, state) => {
 		e.preventDefault();
 		const valid = await this.validate(state);
+		const {email, password} = state;
 		if (!valid) return;
 		this.setState({spinner: true});
-		$.ajax({
-			url: 'http://localhost:3000/user/create',
-			type: 'POST',
-			data: {
-				email: state.email,
-				password: state.password,
-				role: state.isAdmin ? 0 : 1,
-			}
-		}).done(data => {
-			if (data.success) {
-				ActionsGeneral.resetReuslts();
-				localStorage.id = data.user._id;
-				localStorage.email = data.user.email;
-				localStorage.role = data.user.role;
-				this.props.history.push('/');
-			} else {
-				const errArr = [...this.state.errArr];
-				errArr.push('Something went wrong try again later');
-				this.setState({
-					spinner: false,
-				});
-			}
-		}).fail(err => {
-		
-		});
+		axios.post('http://localhost:3000/user/create', {email, password})
+			.then(res => {
+				const {success, user} = res.data;
+				if (success) {
+					const {_id, email, role} = user;
+					ActionsGeneral.resetReuslts();
+					localStorage.id = _id;
+					localStorage.email = email;
+					localStorage.role = role;
+					this.props.history.push('/');
+				} else {
+					const errArr = [...this.state.errArr];
+					errArr.push('Something went wrong try again later');
+					this.setState({
+						spinner: false,
+					});
+				}
+			})
+			.catch(err => {
+			});
 	}
 	
 	sendLogin = async (e, state) => {
 		e.preventDefault();
 		const valid = await this.validate(state);
+		const {email, password} = state;
 		if (!valid) return;
 		this.setState({spinner: true});
-		$.ajax({
-			url: 'http://localhost:3000/user/login',
-			type: 'POST',
-			data: {
-				email: state.email,
-				password: state.password,
-			}
-		}).done(data => {
-			if (data.success) {
-				ActionsGeneral.resetReuslts();
-				localStorage.id = data.user._id;
-				localStorage.email = data.user.email;
-				localStorage.role = data.user.role;
-				this.props.history.push('/');
-			} else {
-				const errArr = [...this.state.errArr];
-				errArr.push('Incorrect Email / Password, and no i dont have recovery services so youre stuck');
-				this.setState({
-					errArr,
-					spinner: false,
-				});
-			}
-		}).fail(err => {
-		
-		});
+		axios.post('http://localhost:3000/user/login', {email, password})
+			.then(res => {
+				const {success, user} = res.data;
+				if (success) {
+					const {_id, email, role} = user;
+					ActionsGeneral.resetReuslts();
+					localStorage.id = _id;
+					localStorage.email = email;
+					localStorage.role = role;
+					this.props.history.push('/');
+				} else {
+					const errArr = [...this.state.errArr];
+					errArr.push('Incorrect Email / Password, and no i dont have recovery services so youre stuck');
+					this.setState({
+						errArr,
+						spinner: false,
+					});
+				}
+			})
+			.catch(err => {
+			});
 	}
 	
 	componentWillMount = () => {

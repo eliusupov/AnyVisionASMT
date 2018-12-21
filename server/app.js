@@ -9,7 +9,7 @@ const app = express();
 const mongoose = require('mongoose');
 let dev_db_url = 'mongodb://eliusupov:eliusupov9422660@ds125365.mlab.com:25365/anyvisionitunesasmt';
 let mongoDB = process.env.MONGODB_URI || dev_db_url;
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, {useNewUrlParser: true});
 mongoose.Promise = global.Promise;
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
