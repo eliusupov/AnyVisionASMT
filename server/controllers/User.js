@@ -12,12 +12,15 @@ exports.userCreate = async (req, res, next) => {
 	try {
 		const user = await User.findOne({email});
 		if (!user) {
-			newUser.save((err) => {
+			try {
+				const user = await newUser.save();
 				res.send({
-					user: newUser,
+					user: user,
 					success: true,
 				});
-			})
+			} catch (err) {
+				return next(err);
+			}
 		} else {
 			res.send({success: false});
 		}
