@@ -35,7 +35,7 @@ export function getResults(userId) {
 			dispatchSpinner(false);
 		})
 		.catch(err => {
-
+			dispatchSpinner(false);
 		})
 }
 
