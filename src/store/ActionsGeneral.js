@@ -1,12 +1,14 @@
 import dispatcher from './dispatcher';
 import axios from 'axios';
 
-export function setLocalStorage(results, searchString, topTen) {
-	localStorage.results = JSON.stringify(results);
-	localStorage.searchString = searchString;
-	localStorage.topTen = JSON.stringify(topTen);
+export function dispatchResults(results = [], searchString = '', topTen = {}) {
+	dispatcher.dispatch({
+		type: 'GET_SEARCH_RESULTS',
+		results,
+		searchString,
+		topTen,
+	});
 }
-
 export function dispatchSpinner(bool) {
 	dispatcher.dispatch({
 		type: 'SPINNER',
@@ -21,14 +23,32 @@ export function dispatchError(errorMsg) {
 	});
 }
 
-export function fetchResults(e, string, topTen) {
+export function getResults(userId) {
+	dispatchSpinner(true);
+	axios.get(`http://localhost:3000/user/getResult/${userId}`)
+		.then(res => {
+			const {success, result} = res.data;
+			const {results, searchString, topTen} = result;
+			if (success) {
+				dispatchResults(results, searchString, topTen);
+			}
+			dispatchSpinner(false);
+		})
+		.catch(err => {
+
+		})
+}
+
+export function saveResult(userId, results, searchString, topTen) {
+	axios.post('http://localhost:3000/user/saveResult', {userId, results, searchString, topTen})
+		.catch(err => {
+		
+		})
+}
+
+export function fetchResults(userId, e, string, topTen) {
 	e.preventDefault();
-	dispatcher.dispatch({
-		type: 'GET_SEARCH_RESULTS',
-		results: [],
-		searchString: string,
-		topTen,
-	});
+	dispatchResults([], string, topTen);
 	if (string) {
 		dispatchError('');
 		dispatchSpinner(true);
@@ -37,7 +57,6 @@ export function fetchResults(e, string, topTen) {
 		} else {
 			topTen[string] = 1;
 		}
-		setLocalStorage([], string, topTen);
 		axios.get(`https://itunes.apple.com/search?term=${string}&limit=25`)
 			.then(res => {
 				const {results, resultCount} = res.data;
@@ -48,23 +67,18 @@ export function fetchResults(e, string, topTen) {
 				dispatchSpinner(false);
 				if (resultCount === 0) {
 					dispatchError(`Sorry, no results found for ${string}.`);
-					setLocalStorage([], '', topTen);
+					saveResult(userId, [], '', topTen);
 					return;
 				}
-				dispatcher.dispatch({
-					type: 'GET_SEARCH_RESULTS',
-					results: results,
-					searchString: string,
-					topTen,
-				});
-				setLocalStorage(results, string, topTen);
+				dispatchResults(results, string, topTen);
+				saveResult(userId, results, string, topTen);
 			})
 			.catch(err => {
 				dispatchError('There was a problem with the request please try again later.');
 				dispatchSpinner(false);
 			});
 	} else {
-		setLocalStorage([], string, topTen);
+		saveResult(userId, [], string, topTen);
 		dispatchError('');
 		dispatchSpinner(false);
 	}

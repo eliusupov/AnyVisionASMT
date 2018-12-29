@@ -1,15 +1,16 @@
 import { EventEmitter } from 'events';
 import dispatcher from './dispatcher';
+import * as ActionsGeneral from './ActionsGeneral';
 
 class GeneralStore extends EventEmitter {
-	results = localStorage.results ? JSON.parse(localStorage.results) : [];
-	searchString = localStorage.searchString ? localStorage.searchString : '';
-	topTen = localStorage.topTen ? JSON.parse(localStorage.topTen) : {};
+	results = [];
+	searchString = '';
+	topTen = {};
 	spinner = false;
 	error = '';
 	users = [];
 	
-	handleActions(action) {
+	handleActions (action) {
 		switch (action.type) {
 			case "GET_SEARCH_RESULTS": {
 				this.results = action.results;

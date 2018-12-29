@@ -7,12 +7,12 @@ import './Main.scss';
 
 class Main extends Component {
 	state = {
-		searchString: GeneralStore.searchString,
-		results: GeneralStore.results,
-		error: GeneralStore.error,
+		searchString: '',
+		results: [],
+		error: '',
 		showTopTen: false,
-		topTen: GeneralStore.topTen,
-		spinner: GeneralStore.spinner,
+		topTen: {},
+		spinner: false,
 	}
 	
 	inputHandler = searchString => this.setState({searchString});
@@ -81,6 +81,10 @@ class Main extends Component {
 	}
 	
 	componentDidMount = () => {
+		if (GeneralStore.searchString === '') {
+			ActionsGeneral.getResults(localStorage.id);
+		}
+		this.updateResults();
 		GeneralStore.on('change', this.updateResults);
 	}
 	
@@ -126,7 +130,7 @@ class Main extends Component {
 						type="submit"
 						className="search-input-button"
 						value="Search"
-						onClick={e => ActionsGeneral.fetchResults(e, searchString, topTen)}
+						onClick={e => ActionsGeneral.fetchResults(localStorage.id ,e, searchString, topTen)}
 					/>
 				</form>
 				{spinner
