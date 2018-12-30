@@ -97,14 +97,19 @@ class Main extends Component {
 		return (
 			<div className='main'>
 				{localStorage.role == 0 &&
-					<div
-						className="manage-users-secret"
-						onClick={() => this.props.history.push('/manageusers')}
-					>
-						Manage Users
-					</div>
+				<div
+					className="manage-users-secret"
+					onClick={() => this.props.history.push('/manageusers')}
+				>
+					Manage Users
+				</div>
 				}
-				<div className="log-out" onClick={() => this.logOut()}>Logout</div>
+				<div
+					className="log-out"
+					onClick={() => this.logOut()}
+				>
+					Logout
+				</div>
 				<h1>iTunes Search</h1>
 				<div className="top-ten-container">
 					<button
@@ -130,7 +135,7 @@ class Main extends Component {
 						type="submit"
 						className="search-input-button"
 						value="Search"
-						onClick={e => ActionsGeneral.fetchResults(localStorage.id ,e, searchString, topTen)}
+						onClick={e => ActionsGeneral.fetchResults(localStorage.id, e, searchString, topTen)}
 					/>
 				</form>
 				{spinner
